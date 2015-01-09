@@ -1,0 +1,52 @@
+---
+layout: post
+title: Passing JSON from Express to Angular and Jade
+date: 2013-10-17 00:52:21.000000000 -07:00
+categories: []
+tags:
+- angular
+- AngularJS
+- express
+- HTML
+- Jade
+- JavaScript
+- JSON
+- MEAN
+- mongodb
+- node
+- nodejs
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '53292888'
+  geo_public: '1'
+  geo_latitude: '0.000000'
+  geo_longitude: '0.000000'
+  geo_accuracy: '0'
+  _wpas_skip_4181345: '1'
+  _wpas_skip_4181352: '1'
+  _publicize_pending: '1'
+  publicize_twitter_user: c2kc
+  publicize_twitter_url: http://t.co/x6aKWblTzd
+  _wpas_done_4181349: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:194479599;b:1;}}
+  _wpas_skip_4181349: '1'
+author:
+  login: chrischang12
+  email: chris@objectlabs.com
+  display_name: chrischang12
+  first_name: ''
+  last_name: ''
+---
+<p>Lately I've been working on a side project using the MEJAN stack (MEAN with Jade, copyright C.C.). It's appealing because working with Javascript in the client and server should equate to quick development and intuitive data/object passing from the MongoDB to Express to Jade to Angular and back to Jade. For a beginner however, it's actually not very straightforward. So, I decided to make a boilerplate without any fluff as all the stuff I found online wasn't "to-the-point" enough, or was a little too "hacky" i.e. didn't work or added seemingly unnecessary complexity.</p>
+<p>First, the repo: <a href="https://github.com/chrischang12/mejan-boilerplate" target="_blank">https://github.com/chrischang12/mejan-boilerplate</a></p>
+<p>There are three main files you want to look at: app.js, /public/javascript/controller.js and /views/homepage.jade. I'll do a quick code walkthrough.</p>
+<p>[gist]7020467[/gist]</p>
+<p>Express passes seed data to the Jade template as a Javascript object- a JSON array stored as the "data" object.</p>
+<p>[gist]7020513[/gist]</p>
+<p>Jade template then grabs the data object and converts it into JSON and passes it to Angular. By converting the object in this step, your script element contains only JSON, which is super easy to work with.</p>
+<p>note: If you've worked with Jade before, you may notice the !{} interpolation. I learned from this <a href="http://mircozeiss.com/how-to-pass-javascript-variables-from-a-server-to-angular" target="_blank">blog post</a> that #{} escapes HTML, which ultimately results in undesirable formatting.</p>
+<p>[gist]7020581[/gist]</p>
+<p>The Angular service (factory)  then grabs the JSON  and turns it back into a Javascript object and is stored under $parser.data, ready for transport to the controller. This service is a dependency for the controller, which allows the dummy controller access to the data. Now the controller is populated with data and we head back to Jade. The data from the controller is now used in ng-repeat to dynamically create divs. Woohoo!</p>
+<p>Hope this saves someone from pulling their hair out!</p>

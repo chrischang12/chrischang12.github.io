@@ -1,0 +1,85 @@
+---
+layout: post
+title: Fishing Licenses and Exception Handling
+date: 2013-08-06 14:34:22.000000000 -07:00
+categories: []
+tags:
+- computer science
+- control flow
+- cs
+- Exception handling
+- exceptions
+- fishing
+- fishing license
+- mongolab
+- twitter
+- WWOOF
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '53292888'
+  geo_public: '1'
+  geo_latitude: '37.774929'
+  geo_longitude: "-122.419416"
+  geo_address: San Francisco, CA
+  geo_accuracy: '0'
+  _publicize_pending: '1'
+  _wpas_done_4181345: '1'
+  _publicize_done_external: a:1:{s:8:"facebook";a:1:{i:100005519520521;b:1;}}
+  publicize_twitter_user: c2kc
+  _wpas_done_4181349: '1'
+  _wpas_done_4181352: '1'
+  publicize_reach: a:3:{s:7:"twitter";a:1:{i:4181349;i:36;}s:2:"fb";a:1:{i:4181345;i:68;}s:2:"wp";a:1:{i:0;i:7;}}
+  tagazine-media: a:7:{s:7:"primary";s:0:"";s:6:"images";a:0:{}s:6:"videos";a:0:{}s:11:"image_count";i:0;s:6:"author";s:8:"53292888";s:7:"blog_id";s:8:"55761116";s:9:"mod_stamp";s:19:"2013-08-06
+    22:34:22";}
+author:
+  login: chrischang12
+  email: chris@objectlabs.com
+  display_name: chrischang12
+  first_name: ''
+  last_name: ''
+---
+<p>I never thought I'd be the nerdy guy drawing parallels between real life and coding. What a pleasant surprise!</p>
+<p>After I graduated this past June, I spent a month in Homer, AK WWOOFing. I encourage everyone to try it.  When I got there, I realized that I was in one of the biggest fishing capitals in the world.  I started obsessing over learning to fish, going fishing, catching fish, eating fish, etc. It was a given, then, that I, being the upstanding citizen that I am, would get a fishing license. To my dismay, I found out they were $145.</p>
+<p>Despite my ostentatious bar and "indulgence" spending, $145 was a bit too steep for me.  There were other options, like daily, (few) days and week passes, but even then I wasn't sold.  How was I supposed to know when I was going (I was there to work on a farm), and the idea of having to go consecutive days for however long I purchased a pass for was reminiscent of a relationship I wanted no part in.  I opted to go license-less. I was a rebel.</p>
+<p>Eventually, my morals triumphed, and I shelled out the money that stood between me and happiness- good, I didn't want that money anyway.  And so, my conscience was cleared. More importantly,  I suppose, I no longer ran the risk of getting ticketed.</p>
+<p>** I ended up never getting asked for my license despite going fishing 5-6 times.</p>
+<p>Insert segway here:</p>
+<p>The other day, I was discussing with the bossman my new, soon to be released (cue the OOOOOHHHH's) script that talks to Twitter's API and harvests tweets.  It was a project that took me a while, mainly because I'm not a terribly gifted coder.  After  a couple exchanges, he advised to stop using an exception for control flow.  "It's expensive", he sagely said. Truthfully, I had no idea what he was talking about at the time, I just nodded.  But, after doing some more research, it's a little like fishing licenses.</p>
+<p>Consider:</p>
+<p>[code language="css"]<br />
+for tweet in tweets:<br />
+    max_id = id_str = tweet[&quot;id_str&quot;]<br />
+    try:<br />
+        if numtweets == 0:<br />
+            print 'Hit numtweets!'<br />
+            sys.exit()<br />
+        db.TwitterHarvest.save(tweet)<br />
+        numtweets-=1<br />
+        except pymongo.errors.DuplicateKeyError:<br />
+           if len(tweets) == 1:<br />
+               print 'No more tweets to harvest!'<br />
+               sys.exit()<br />
+   url = base_url + &quot;&amp;max_id=&quot; + max_id<br />
+[/code]</p>
+<p>In the above, my code is structured around pymongo.errors.DuplicateKeyError as a sort of base case- it has to hit this code in order for the program to finish.  If I start inserting duplicate tweets into MongoLab, then get me outta here!</p>
+<p>[code language="css"]</p>
+<p>for tweet in tweets:<br />
+    max_id = id_str = tweet[&quot;id_str&quot;]<br />
+    try:<br />
+        if tweet_count == numtweets:<br />
+            print 'Hit numtweets!'<br />
+            return<br />
+    db['twitter-harvest'].update({&quot;id_str&quot;:id_str},tweet,upsert = True)<br />
+    tweet_count+=1<br />
+    except Exception:<br />
+       print 'Unexpected error encountered'<br />
+       return<br />
+    url = base_url + &quot;&amp;max_id=&quot; + max_id</p>
+<p>[/code]</p>
+<p>Here I take a more graceful approach. The exception is more of a oh s*** type of mechanism, and the code is set up so that I can gracefully traverse through the tweets and terminate without exceptions.</p>
+<p>Initially, I used the exception because the thought of control flow optimization didn't even occur to me. I had no computer science morals. Luckily, bossman (in this case my computer science conscience) told me (in more eloquent terms) "hey dude, that's not moral". I then thought back to my fishing license- everything suddenly made sense. My newer code is a few lines longer in other places due to setup, but the control flow doesn't rely on an exception to bail it out every time.</p>
+<p>So how the the hell does this have anything to do with fishing licenses? Well, exceptions are (generally) expensive; the "expensiveness" typically depends on the language, but for most purposes returning the stack/stack trace is the culprit.  Similarly expensive are tickets from the local government's Fish &amp; Game.</p>
+<p>If you know it's pretty rare to hit the exception (in the first case it hits twice), or that licenses are rarely checked, you might get tempted to be lazy or cheap- whether that means not taking the time to set up the control flow  properly, or foregoing the purchase of a license.  You might think it's fine and dandy until you get caught, but in the interim your conscience will never truly rest easy. You just know it isn't the right thing to do.</p>
+<p>TL;DR- Fishing Licenses and Exceptions are both expensive</p>
